@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>PythonCompiler</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/python/python.min.js"></script>
+	<style>
+		body {
+			font-family: 'Arial', sans-serif;
+			background-color: #f0f4f7;
+			margin: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+		}
+
+		form {
+			width: 100%;
+			max-width: 800px;
+			background-color: #ffffff;
+			padding: 30px;
+			border-radius: 10px;
+			box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+		}
+
+		label {
+			display: block;
+			margin-bottom: 12px;
+			font-weight: bold;
+			color: black;
+			font-family: 'Times New Roman', Times, serif;
+		}
+
+		#codearea,
+		#output {
+			height: 300px;
+			font-size: 16px;
+			width: 100%;
+			border: 1px solid blue;
+			border-radius: 5px;
+			padding: 12px;
+			margin-bottom: 24px;
+			resize: vertical;
+		}
+
+		#output {
+			height: 150px;
+			padding: 6px;
+		}
+
+		button {
+			color: blue;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 5px;
+			border: 1px solid blue;
+			cursor: pointer;
+			font-size: 15px;
+		}
+
+		button:hover {
+			background-color: blue;
+			color: white;
+		}
+	</style>
+</head>
+
+<body> 
+	<h2 style="font-family: 'Times New Roman', Times, serif; ">Python Compiler</h2>
+	<form action="/runcode" method="post">
+		{% csrf_token %}
+		<div>
+			<label for="codearea">Code Area</label>
+			<textarea id="codearea" name="codearea" rows="10" >{{ code }}</textarea>
+		</div>
+		<hr>
+		<div>
+			<label for="output">Output</label>
+			<textarea id="output" name="output" rows="4" disabled>{{ output }}</textarea>
+		</div>
+
+		<button type="submit">Run Code</button>
+	</form>
+
+	<script>
+		var codeEditor = CodeMirror.fromTextArea(document.getElementById("codearea"), {
+			mode: "python",
+			lineNumbers: true,
+			indentUnit: 4,
+			extraKeys: { Tab: "indentMore", "Shift-Tab": "indentLess" },
+		});
+	</script>
+</body>
+
+</html>
