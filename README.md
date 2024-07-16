@@ -1,7 +1,9 @@
 # PythonProjects
 Collection of projects
 
-<h2>Language-Python</h2>
+<h2>Language</h2>
+ <p>-Python</p>
 <h2>Frameworks</h2>
-1.flask
-2.Django
+<p>1.flask</p>
+<p>2.Django</p>
+
