@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: transparent; /* Light background color */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center; /* Center align horizontally */
+            align-items: center; /* Center align vertically */
+            height: 100vh; /* Full viewport height */
+        }
+        .container {
+            width: 100%;
+            max-width: 500px; /* Limit maximum width for larger screens */
+            margin: 50px auto; /* Center the form */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow for better visual */
+            background-color: #fff; /* White background for container */
+        }
+        input[type="text"], input[type="password"], button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box; /* Ensure padding is included in width calculation */
+            border: none; /* Remove default border */
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none; /* Remove default focus outline */
+            transition: box-shadow 0.3s ease; /* Smooth transition for box-shadow */
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            box-shadow: 0 0 5px #007bff; /* Add box shadow on focus */
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 75%;
+                margin: 20px auto; /* Adjust margin for smaller screens */
+                padding: 10px;
+            }
+            input[type="text"], input[type="password"], button {
+                font-size: 14px; /* Decrease font size on smaller screens */
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                fetch('/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Login successful') {
+                        window.location.href = data.redirect;
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">Admin Login</h2>
+        <form id="adminLoginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>

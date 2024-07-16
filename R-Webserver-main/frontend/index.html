@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R Compiler</title>
+    <link rel="stylesheet" href="/frontend/styles.css">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar section -->
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+            <div class="container-fluid">
+                <nav aria-label="breadcrumb" style="margin-top: 10px;">
+                    <div style="margin-bottom: 30px;">
+                        <i class="fa-brands fa-r-project fa-2xl"></i>
+                    </div>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#">Home</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html">R Docs</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <a href="../frontend/register.html">Register</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <a href="../frontend/admin_login.html" onclick="viewUsers()">View Users</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <button onclick="saveCode()" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-save"></i>
+                                Save Code
+                            </button>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </nav>
+    </div>
+    <!-- End Navbar section -->
+
+    <div class="container">
+        <div class="form-outline" data-mdb-input-init>
+            <textarea id="code" class="form-control" rows="10" placeholder="Enter your R code here..."></textarea>
+        </div>
+        <hr>
+        <!-- Run Program Button -->
+        <button onclick="compileCode()" class="btn text-white" style="background-color: #55acee; margin-top: 10px;" role="button">
+            <i class="fas fa-play"></i>
+            Run
+        </button>
+        <hr>
+        <h2>Output</h2>
+        <hr>
+        <pre id="output">(Run the Program to see output)</pre>
+    </div>
+
+    <script src="/frontend/script.js"></script>
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+
+    <script>
+        // Function to save code as a file
+        function saveCode() {
+            var code = document.getElementById('code').value;
+            var fileName = prompt("Enter a file name to save:");
+            if (fileName) {
+                download(code, fileName + '.txt', 'text/plain');
+            }
+        }
+
+        // Function to download content as a file
+        function download(content, fileName, contentType) {
+            var a = document.createElement("a");
+            var file = new Blob([content], {type: contentType});
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            a.click();
+        }
+
+        // Function to compile R code
+        function compileCode() {
+            var code = document.getElementById('code').value;
+            var outputElement = document.getElementById('output');
+
+            // Show compiling message
+            outputElement.textContent = 'Compiling...';
+
+            // Simulate 2 seconds delay (replace with actual fetch if needed)
+            setTimeout(function() {
+                fetch('/compile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ code: code }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display output or error
+                    outputElement.textContent = data.output || data.error || 'No output! //Check for errors';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }, 2000); // 2 seconds delay
+        }
+
+        // Function to fetch and display users for admin
+        function viewUsers() {
+            fetch('/admin/users')
+                .then(response => response.json())
+                .then(data => {
+                    var users = data.users;
+                    var userList = '';
+                    users.forEach(user => {
+                        userList += `<div>User ID: ${user.id}</div>
+                                     <div>First Name: ${user.first_name}</div>
+                                     <div>Second Name: ${user.second_name}</div>
+                                     <div>Email: ${user.email}</div>
+                                     <div>Compiled Code:</div>
+                                     <pre>${user.compiled_code}</pre>
+                                     <hr>`;
+                    });
+                    document.getElementById('output').innerHTML = userList;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>

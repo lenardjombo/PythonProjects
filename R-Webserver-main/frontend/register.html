@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/frontend/register.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <label for="first_name">First Name:</label><br>
+                <input type="text" id="first_name" name="first_name"><br>
+                <label for="second_name">Second Name:</label><br>
+                <input type="text" id="second_name" name="second_name"><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email"><br>
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" name="password"><br>
+                <button type="submit">Register</button>
+                <a href="../frontend/login.html">Back to login</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const firstName = document.getElementById('first_name').value;
+            const secondName = document.getElementById('second_name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ first_name: firstName, second_name: secondName, email: email, password: password })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

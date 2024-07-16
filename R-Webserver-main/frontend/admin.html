@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="/frontend/admin.css"> <!-- Link to your admin.css file -->
+</head>
+<body>
+    <div class="container">
+        <h4>Welcome Admin!</h4>
+
+        <h5>User Management</h5>
+
+        <table>
+            <caption>User List</caption>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userList">
+                <!-- User rows will be inserted here -->
+            </tbody>
+        </table>
+
+        <h2>Delete User</h2>
+        <form id="deleteUserForm">
+            <label for="userId">Enter User ID to Delete:</label>
+            <input type="number" id="userId" name="userId" min="1" required>
+            <button type="button" onclick="deleteUser()">Delete User</button>
+        </form>
+
+        <div id="alertMessage" class="alert" style="display: none;"></div> <!-- Alert message placeholder -->
+
+        <script>
+            async function deleteUser() {
+                const userId = document.getElementById('userId').value;
+
+                try {
+                    const response = await fetch(`/admin/delete_user/${userId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    showAlert(data.message); // Show alert message after deletion
+                    fetchUserList(); // Fetch updated user list
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert('Failed to delete user.', true);
+                }
+            }
+
+            async function fetchUserList() {
+                const response = await fetch('/admin/users');
+                const data = await response.json();
+                const userList = data.users;
+
+                const userListBody = document.getElementById('userList');
+                userListBody.innerHTML = ''; // Clear existing list
+
+                userList.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td data-label="User ID">${user.id}</td>
+                        <td data-label="First Name">${user.first_name}</td>
+                        <td data-label="Last Name">${user.second_name}</td>
+                        <td data-label="Email">${user.email}</td>
+                        <td data-label="Actions">
+                            <button onclick="deleteUserById(${user.id})">Delete</button>
+                        </td>
+                    `;
+                    userListBody.appendChild(row);
+                });
+            }
+
+            async function deleteUserById(userId) {
+                try {
+                    const response = await fetch(`/admin/delete_user/${userId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    showAlert(data.message); // Show alert message after deletion
+                    fetchUserList(); // Fetch updated user list
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert('Failed to delete user.', true);
+                }
+            }
+
+            function showAlert(message, isError = false) {
+                const alertDiv = document.getElementById('alertMessage');
+                alertDiv.style.display = 'block';
+                alertDiv.textContent = message;
+                if (isError) {
+                    alertDiv.style.backgroundColor = '#f44336'; // Red background for error
+                } else {
+                    alertDiv.style.backgroundColor = '#4CAF50'; // Green background for success
+                }
+                setTimeout(() => {
+                    alertDiv.style.display = 'none';
+                }, 3000); // Hide alert after 3 seconds
+            }
+
+            // Fetch user list on page load
+            fetchUserList();
+        </script>
+    </div>
+</body>
+</html>
