@@ -44,7 +44,7 @@ clues would be: Buzz Fizz.''')
         if not input('> ').lower().startswith('y'):
             break
 
-    print('Thanks for playing!')
+    print('Thanks for playing! ')
 
 def get_secret_num():
     """Returns a string made up of NUM_DIGITS unique random digits."""
